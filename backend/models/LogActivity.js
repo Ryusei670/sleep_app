@@ -6,7 +6,7 @@ const LogSchema = new mongoose.Schema({
     last_name: {type: String},
     sleep_time: {type: Date},
     wake_time: {type: Date},
-    length: {type: Number}
+    len: {type: Number}
 })
 
 const Logs = mongoose.model("Log", LogSchema)

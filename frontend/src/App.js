@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import DateTimePicker from 'react-datetime-picker';
 import Moment from 'react-moment';
 import 'moment-timezone';
+import axios from 'axios';
+// import moment from 'moment';
 
 function App() {
 
@@ -10,9 +12,37 @@ function App() {
   const handleWakeUpChange = (e) => {setWakeUpTime(e)}; //updates value of hour/minute/second/AMPM
   const [sleepTime, setSleepTime] = useState(new Date());
   const handleSleepChange = (e) => {setSleepTime(e)}; //updates value of hour/minute/second/AMPM
-  const [time_diff, setTimeDiff] = useState(new String());
-  const handleTimeDiffChange = (start, stop) => {setTimeDiff(<Moment diff={start.toUTCString()} unit="hours" decimal>{stop}</Moment>)};
-  const handleSubmit = (e) => {console.log("Submit was clicked")}; //make this a function later
+  const [time_diff, setTimeDiff] = useState(0);
+  const handleTimeDiffChange = (start, stop) => {
+    // var ms = moment(stop,"DD/MM/YYYY HH:mm:ss").diff(moment(start,"DD/MM/YYYY HH:mm:ss"));
+    // var d = moment.duration(ms);
+    // var s = Math.floor(d.asHours()) + moment.utc(ms).format(":mm:ss");
+    // console.log(s);
+    setTimeDiff(<Moment diff={start.toUTCString()} unit="hours" decimal>{stop}</Moment>)
+  };
+  const handleSubmit = async (e) => {
+    e.preventDefault()
+    
+    console.log({
+      "username": "default",
+      "first_name": "first",
+      "last_name": "last",
+      "sleep_time": sleepTime,
+      "wake_time": wakeUpTime,
+      "len": time_diff
+    })
+
+    await axios.post("http://localhost:4000/api/log",
+    {
+      "username": "default",
+      "first_name": "first",
+      "last_name": "last",
+      "sleep_time": sleepTime,
+      "wake_time": wakeUpTime,
+      "len": time_diff
+    })
+    console.log("Submit was clicked")
+  }; //make this a function later
 
   const user = "User";
   return (
