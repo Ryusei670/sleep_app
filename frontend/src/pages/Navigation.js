@@ -1,49 +1,100 @@
-import React, { useState } from 'react';
-import DateTimePicker from 'react-datetime-picker';
-import Moment from 'react-moment';
-import 'moment-timezone';
+import React from 'react';
+import PropTypes from 'prop-types';
+import { makeStyles } from '@material-ui/core/styles';
+import { AppBar, Toolbar, Typography, Button } from '@material-ui/core';
+import { Link, useHistory } from 'react-router-dom';
 
-function App() {
+const useStyles = makeStyles((theme) => ({
+  root: {
+    flexGrow: 1,
+  },
+  menuButton: {
+    marginRight: theme.spacing(2),
+  },
+  title: {
+    flexGrow: 1,
+  },
+  button: {
+    color: 'inherit',
+    textDecorationLine: 'none',
+    '&:hover': {
+      color: 'white',
+    },
+  },
+}));
 
-  
-  const [wakeUpTime, setWakeUpTime] = useState(new Date());
-  const handleWakeUpChange = (e) => {setWakeUpTime(e)}; //updates value of hour/minute/second/AMPM
-  const [sleepTime, setSleepTime] = useState(new Date());
-  const handleSleepChange = (e) => {setSleepTime(e)}; //updates value of hour/minute/second/AMPM
-  const [time_diff, setTimeDiff] = useState(new String());
-  const handleTimeDiffChange = (start, stop) => {setTimeDiff(<Moment diff={start.toUTCString()} unit="hours" decimal>{stop}</Moment>)};
-  const handleSubmit = (e) => {console.log("Submit was clicked")}; //make this a function later
+const Navigation = ({ auth, handleAuth, username, setUsername }) => {
+  const history = useHistory();
+  const classes = useStyles();
 
-  const user = "User";
+  const handleLogout = () => {
+    handleAuth(false);
+    setUsername('');
+    localStorage.clear();
+    localStorage.setItem('auth', false);
+    history.replace('/');
+    console.log("in handleLogout: ", auth);
+  };
+
+  // console.log(auth);
+
   return (
-    <div className="App">
-      <header className="App-header">
-        {/* <img src={logo} className="App-logo" alt="logo" /> */}
-        <p>
-          Hello {user}! Welcome to the Sleep App!
-        </p>
-        <p>
-          Sleep Time: <DateTimePicker
-            onChange= {(e) => {handleSleepChange(e); handleTimeDiffChange(e, wakeUpTime)}}
-            value={sleepTime}
-          />
-        </p>
-        <p>
-          Wake Time: <DateTimePicker
-            onChange= {(e) => {handleWakeUpChange(e); handleTimeDiffChange(sleepTime, e)}}
-            value={wakeUpTime}
-          />
-        </p>
-        <p>
-          Sleep Length: {time_diff}
-          <button onClick={handleSubmit}> Submit
-          </button>
-        </p>
-      </header>
+    <div data-testid="navbar">
+      <AppBar position="sticky">
+        <Toolbar>
+          {auth ? (
+            <Typography variant="h6" className={classes.title}>
+              <Link to="/" className={classes.button} data-testid="Home">
+                <Button className={classes.button}>Home</Button>
+              </Link>
+              <Link to="/user/logs/" className={classes.button} data-testid="UserLogs">
+                <Button className={classes.button}>Activity</Button>
+              </Link>
+            </Typography>
+          ) : (
+            <Typography variant="h6" className={classes.title}>
+              <Link to="/" className={classes.button} data-testid="Home">
+                <Button className={classes.button}>Home</Button>
+              </Link>
+            </Typography>
+          )}
+
+          {auth ? (
+            <div>
+              <Button className={classes.button}>Hello, {username}</Button>
+              <Button
+                onClick={handleLogout}
+                className={classes.button}
+                data-testid="logout"
+              >
+                Logout
+              </Button>
+            </div>
+          ) : (
+            <React.Fragment key="key">
+              <Link to="/login" className={classes.button} data-testid="login">
+                <Button className={classes.button}>Login</Button>
+              </Link>
+              <Link to="/register" className={classes.button} data-testid="register">
+                <Button className={classes.button}>Register</Button>
+              </Link>
+            </React.Fragment>
+          )}
+        </Toolbar>
+      </AppBar>
     </div>
   );
-}
+};
 
-export default App;
-  
+Navigation.propTypes = {
+  auth: PropTypes.bool.isRequired,
+  handleAuth: PropTypes.func.isRequired,
+  username: PropTypes.string,
+  setUsername: PropTypes.func.isRequired,
+};
 
+Navigation.defaultProps = {
+  username: '',
+};
+
+export default Navigation;
