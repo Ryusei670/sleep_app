@@ -4,9 +4,8 @@ import Moment from 'react-moment';
 import 'moment-timezone';
 import axios from 'axios';
 import moment from 'moment';
-import LogList from './pages/Logs'
 
-function App() {
+function AddLog() {
 
   
   const [wakeUpTime, setWakeUpTime] = useState(new Date());
@@ -82,11 +81,10 @@ function App() {
           </button>
         </p>
       </header>
-      <LogList />
     </div>
   );
 }
 
-export default App;
+export default AddLog;
   
 

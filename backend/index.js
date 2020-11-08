@@ -2,6 +2,7 @@ const mongoose = require('mongoose');
 const express = require('express');
 const Logs = require('./models/LogActivity');
 const cors = require('cors');
+const { restart } = require('nodemon');
 
 (async () => {
     try{
@@ -33,6 +34,16 @@ const cors = require('cors');
                 len: req.body.len
             })
             resp.send("log added")
+        })
+
+        App.get("/api/logs/:user", async (req, resp) => {
+          try{
+            const logs = await Logs.find({username: req.params.user})
+            return resp.json(logs)
+          }
+          catch{
+              resp.send("Error")
+          }
         })
         App.listen(4000, () => {console.log("listening to port 4000")})
     } catch(e) {console.log(e)}
